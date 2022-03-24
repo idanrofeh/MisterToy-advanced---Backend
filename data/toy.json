@@ -1,0 +1,31 @@
+[
+  {
+    "name": "omer yifrach",
+    "price": 10000000000,
+    "inStock": false,
+    "labels": [
+      "Art"
+    ],
+    "reviews": [],
+    "_id": "JhLavV",
+    "createdAt": 1647875358833
+  },
+  {
+    "name": "hhh",
+    "price": 100,
+    "inStock": true,
+    "labels": [],
+    "reviews": [],
+    "_id": "IEWD21",
+    "createdAt": 1647875701027
+  },
+  {
+    "name": "d",
+    "price": 100,
+    "inStock": true,
+    "labels": [],
+    "reviews": [],
+    "_id": "jw8hlB",
+    "createdAt": 1647977161472
+  }
+]
