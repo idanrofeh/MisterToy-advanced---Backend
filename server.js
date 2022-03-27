@@ -1,42 +1,46 @@
 const express = require("express");
+const cors = require("cors");
+const expressSession = require('express-session');
+const path = require('path');
 const app = express();
-let cors = require("cors");
-const toyService = require("./services/toy.service.js");
+const http = require('http').createServer(app);
 
+
+
+// session setup
+const session = expressSession({
+    secret: 'coding is amazing',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+})
+
+// Express App Config
 app.use(express.json());
-app.use(cors());
+app.use(session);
 
-app.get("/api/toy", (req, res) => {
-    let filterBy = req.query;
-    if (filterBy?.labels?.length) {
-        filterBy.labels = filterBy.labels.split("_");
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.resolve(__dirname, 'public')))
+} else {
+    const corsOptions = {
+        // Make sure origin contains the url your frontend is running on
+        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'http://localhost:3000'],
+        credentials: true
     }
-    const filteredToys = toyService.query(filterBy);
-    res.send(filteredToys);
-});
+    app.use(cors(corsOptions))
+}
 
-app.get("/api/toy/:toyId", (req, res) => {
-    const { toyId } = req.params;
-    const toy = toyService.getById(toyId);
-    res.send(toy);
+const toyRoutes = require('./api/toy/toy.routes');
+
+// routes
+app.use('/api/toy', toyRoutes);
+
+app.get('/**', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
 
-app.delete("/api/toy/:toyId", (req, res) => {
-    const { toyId } = req.params;
-    toyService.remove(toyId);
-    res.send(`${toyId} removed`)
+const logger = require('./services/logger.service')
+const port = process.env.PORT || 3030
+http.listen(port, () => {
+    logger.info('Server is running on port: ' + port)
 })
-
-app.post("/api/toy", (req, res) => {
-    let newToy = req.body;
-    toyService.add(newToy);
-    res.send("Toy added");
-});
-
-app.put("/api/toy", (req, res) => {
-    const newToy = req.body;
-    toyService.update(newToy);
-    res.send(`${newToy.name} updated`);
-})
-
-app.listen(3030, () => console.log("server listening on port 3030!"));
