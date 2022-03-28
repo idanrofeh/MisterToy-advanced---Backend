@@ -37,15 +37,14 @@ async function add(toy) {
 }
 
 async function update(toy) {
+    const idStr = toy._id;
     try {
+        const id = ObjectId(toy._id);
+        delete toy._id;
         const collection = await dbService.getCollection("toy");
-        await collection.updateOne({
-            "_id": ObjectId(toy._id)
-        }, {
-            $set: { ...toy }
-        })
+        await collection.findOneAndUpdate({ _id: id }, { $set: { ...toy } })
     } catch (err) {
-        logger.error(`cannot update toy ${toy._id}`, err);
+        logger.error(`cannot update toy ${idStr}`, err);
         throw err;
     }
 }

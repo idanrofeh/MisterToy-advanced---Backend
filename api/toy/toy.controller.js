@@ -18,9 +18,8 @@ async function getToys(req, res) {
 async function addToy(req, res) {
     try {
         const toy = req.body;
-
-        const addedToy = await toyService.add(toy);
-        res.json(addedToy);
+        await toyService.add(toy);
+        res.status(200);
     } catch (err) {
         logger.error('Failed to add toy', err);
         res.status(500).send({ err: 'Failed to add toy' });
@@ -31,8 +30,8 @@ async function addToy(req, res) {
 async function updateToy(req, res) {
     try {
         const toy = req.body;
-        const updatedToy = await toyService.update(toy);
-        res.json(updatedToy);
+        await toyService.update(toy);
+        res.status(200);
     } catch (err) {
         logger.error('Failed to update toy', err);
         res.status(500).send({ err: 'Failed to update toy' });
@@ -43,9 +42,9 @@ async function updateToy(req, res) {
 // DELETE
 async function removeToy(req, res) {
     try {
-        const toyId = req.params.id;
+        const { toyId } = req.params;
         await toyService.remove(toyId);
-        res.send({ msg: 'Delete Successfully' });
+        res.status(200);
     } catch (err) {
         logger.error('Failed to remove toy', err);
         res.status(500).send({ err: 'Failed to remove toy' });
